@@ -10,9 +10,8 @@ from tqdm import tqdm
 from engine.AnnoterReid import AnnoterReid
 from engine.ImageData import ImageData
 from engine.ReidFileInfo import ReidFileInfo
-from helpers.annotations import ReadAnnotations
 from helpers.augumentations import Augment, transform_color, transform_shape, transform_all
-from helpers.files import FixPath, GetFileLocation, IsImageFile
+from helpers.files import FixPath, GetFileLocation 
 
 def Process(path: str, arguments: argparse.Namespace):
     ''' Process directory'''

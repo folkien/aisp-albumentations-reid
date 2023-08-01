@@ -23,35 +23,37 @@ transform_shape = A.Compose([
 
 # Color : Albumentations transform
 transform_color = A.Compose([
-    # Colors : Brightnes, contrast, tone curve, hue, saturation, value
-    A.SomeOf([
-        A.RandomBrightnessContrast(p=0.3),
-        A.RandomToneCurve(scale=0.5, p=0.3),
-        A.HueSaturationValue(p=0.3),
-        A.ColorJitter(p=0.2),
-        A.Equalize(p=0.3),
-        A.ToSepia(p=0.1),
-    ], n=2),
     # Quality : Jpeg compression, multiplicative noise, downscale
     A.OneOf([
+        A.RandomBrightnessContrast(p=0.3),
+        A.Equalize(p=0.3),
         A.ImageCompression(quality_lower=30, quality_upper=55, p=0.3),
         A.MultiplicativeNoise(p=0.2),
         A.Downscale(scale_min=0.4, scale_max=0.6, p=0.2),
         A.MedianBlur(blur_limit=3, p=0.1),
         A.ISONoise(color_shift=(0.01, 0.08), intensity=(0.2, 0.8), p=0.1),
         A.PixelDropout(dropout_prob=0.1, p=0.1),
-        A.Spatter(p=0.1),
+        A.Spatter(intensity=0.3,p=0.1),
         A.Superpixels(p=0.1),
-        A.GlassBlur(sigma=0.2, max_delta=2, iterations=1, p=0.1),
+        A.GlassBlur(sigma=0.1, 
+                    max_delta=2, 
+                    iterations=1, 
+                    p=0.1),
     ]),
     # Weather : Dropouts, rain, snow, sun flare, fog
     A.OneOf([
-        A.RandomRain(drop_length=10, blur_value=4, p=0.1),
-        A.RandomSnow(p=0.1),
-        A.RandomSunFlare(src_radius=260, num_flare_circles_lower=2,
-                         num_flare_circles_upper=6, p=0.1),
-        A.RandomFog(fog_coef_lower=0.1, fog_coef_upper=0.5,
-                    alpha_coef=0.5, p=0.1),
+        A.RandomRain(drop_length=4, 
+                     blur_value=4, 
+                     p=0.1),
+        A.RandomSnow(p=0.1, brightness_coeff=1),
+        A.RandomSunFlare(src_radius=100, 
+                         num_flare_circles_lower=2,
+                         num_flare_circles_upper=4, 
+                         p=0.1),
+        A.RandomFog(fog_coef_lower=0.1, 
+                    fog_coef_upper=0.5,
+                    alpha_coef=0.5, 
+                    p=0.1),
     ]),
     A.Resize(width=320, height=280, always_apply=True),
 ], bbox_params=A.BboxParams(format='yolo', min_area=100, min_visibility=0.2))
