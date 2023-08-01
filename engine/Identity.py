@@ -50,9 +50,8 @@ class Identity:
         if (len(self.images) == 0):
             return 0
 
-        # Frame numbers
-        frames = sorted([image.frame for image in self.images])
-        return frames[-1]
+        # Maximum frame number
+        return  max([image.frame for image in self.images])
 
     @cached_property
     def hue(self) -> float:
