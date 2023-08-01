@@ -38,9 +38,13 @@ def Process(path: str, arguments: argparse.Namespace):
     
     # Albumentations per identity : Calculate
     albumentations_per_image = max(1, round(args.iterations / len(annoter.identities)))
+    
+    # Identities : Get all IDs
+    identities_ids = annoter.indentities_ids
+    random.shuffle(identities_ids)
 
     # Identities : Loop over every identity
-    for identity_id in annoter.indentities_ids:
+    for identity_id in identities_ids:
         # Identity : Get identity
         identity = annoter.identities[identity_id]
 
