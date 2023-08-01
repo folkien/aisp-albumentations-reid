@@ -9,7 +9,11 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["-i", "input/", "-ac"],
+            "args": [
+                "-i", 
+                "/home/spasz/Dokumenty/git/aisp-imgdb-reid/data/aispreid/", 
+                "-as"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true
         }

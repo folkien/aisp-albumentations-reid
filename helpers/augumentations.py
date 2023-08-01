@@ -2,9 +2,6 @@ import os
 import albumentations as A
 import cv2
 
-from helpers.annotations import Annotations, SaveAnnotations
-from helpers.files import ChangeExtension
-from helpers.hashing import GetRandomSha1
 
 
 # Shape : Albumentations transform
@@ -14,13 +11,14 @@ transform_shape = A.Compose([
         A.MotionBlur(blur_limit=7, p=0.3),
     ], n=2),
     A.GridDistortion(num_steps=3, distort_limit=0.25, p=0.2),
-    A.RandomCrop(width=480, height=320, p=0.3),
+    A.RandomCrop(width=200, height=180, p=0.3),
     A.ShiftScaleRotate(shift_limit=0.1, scale_limit=0.2, rotate_limit=15,
                        p=0.7, border_mode=cv2.BORDER_CONSTANT),
     A.ElasticTransform(alpha_affine=9, p=0.2, border_mode=cv2.BORDER_CONSTANT),
     A.OpticalDistortion(distort_limit=0.2, p=0.2,
                         border_mode=cv2.BORDER_CONSTANT),
     A.ZoomBlur(max_factor=1.1, p=0.2),
+    A.Resize(width=320, height=280, always_apply=True),
 ], bbox_params=A.BboxParams(format='yolo', min_area=100, min_visibility=0.3))
 
 # Color : Albumentations transform
@@ -55,6 +53,7 @@ transform_color = A.Compose([
         A.RandomFog(fog_coef_lower=0.1, fog_coef_upper=0.5,
                     alpha_coef=0.5, p=0.1),
     ]),
+    A.Resize(width=320, height=280, always_apply=True),
 ], bbox_params=A.BboxParams(format='yolo', min_area=100, min_visibility=0.2))
 
 # All : Full transform
@@ -65,8 +64,8 @@ transform_all = A.Compose([
 
 
 def Augment(imagePath: str,
+            outputName : str,
             outputDirectory: str,
-            annotations: Annotations,
             transformations) -> str:
     ''' Read image, augment image and bboxes and save it to new file. '''
 
@@ -74,18 +73,12 @@ def Augment(imagePath: str,
     image = cv2.imread(imagePath)
 
     # Augmentate image
-    transformed = transformations(image=image, bboxes=annotations.annotations)
-
-    # Annotations : Create new
-    newAnnotations = Annotations(
-        imagePath, dataformat=annotations.dataformat, annotations=transformed['bboxes'])
+    transformed = transformations(image=image, bboxes=[])
 
     # Create filename
-    outputFilepath = os.path.join(outputDirectory, f'{GetRandomSha1()}.jpeg')
+    outputFilepath = os.path.join(outputDirectory, outputName)
 
     # Image : Save
     cv2.imwrite(outputFilepath, transformed['image'])
-    # Annotations : Save
-    SaveAnnotations(ChangeExtension(outputFilepath, '.txt'), newAnnotations)
 
     return outputFilepath
